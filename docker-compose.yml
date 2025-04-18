@@ -8,6 +8,7 @@ services:
     container_name: backend-application
     environment:
       OPENAI_API_KEY: $OPENAI_API_KEY
+      POSTGRES_DSN: $POSTGRES_DSN
     restart: always
     expose:
       - "8000"
