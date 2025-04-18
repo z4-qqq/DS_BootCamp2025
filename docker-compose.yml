@@ -29,6 +29,21 @@ services:
       - backend
     restart: always
 
+  postgres:
+    image: postgres:latest
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: assistant
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres_data_prod:
 
 networks:
   backend:
