@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 import base64
-import json
+import orjson
 import os
 
 from app.model.ttt import TTT
@@ -37,8 +37,11 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
     messages = []
     try:
         while True:
-            data = await ws.receive_text()  # сообщение от клиента
-            json_data = json.loads(data)
+            data = await ws.receive_text()
+
+            print(data)# сообщение от клиента
+            json_data = orjson.loads(data)
+            print(json_data)
             if json_data["type"] == "text":  # текст
                 user_input = json_data.get("message", "")
                 is_audio = False

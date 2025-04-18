@@ -1,0 +1,40 @@
+<html lang='ru'>
+    <head>
+        <meta name='theme-color' content='#fff' />
+        <meta charset='utf-8' />
+        <meta http-equiv='x-ua-compatible' content='ie=edge' />
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+        <meta name='viewport' content='width=device-width, initial-scale=1' />
+        <meta name='referrer' content='strict-origin-when-cross-origin' />
+        <style>
+            body { background-color: #f6f6f6; margin: 0; } .root { height: 100vh; position: relative; } #app, .spinner {
+            position: absolute; left: 0; right: 0; top: 0; bottom: 0; } #app { z-index: 2; } #app > * {
+            background-color: #f6f6f6; } .spinner { z-index: 1; display: flex; flex-direction: column; align-items:
+            center; justify-content: center; } .spinner-image { width: 32px; height: 32px; display: block; } circle {
+            stroke: rgb(43, 45, 51); stroke-width: 12px; stroke-miterlimit: 10; fill: none; stroke-dasharray: 85 195;
+            stroke-dashoffset: 0; stroke-linecap: round; transform-origin: 50% center; animation: spinner linear 2s
+            infinite normal none running; } @keyframes spinner { 0% { stroke-dasharray: 85 195; stroke-dashoffset: 0; }
+            10% { stroke-dasharray: 100 180; stroke-dashoffset: -60; } 30% { stroke-dasharray: 260 20;
+            stroke-dashoffset: -290; } 50% { stroke-dasharray: 85 195; stroke-dashoffset: -580; } 60% {
+            stroke-dasharray: 85 195; stroke-dashoffset: -615; } 63% { stroke-dasharray: 85 195; stroke-dashoffset:
+            -620; } 70% { stroke-dasharray: 85 195; stroke-dashoffset: -635; } 80% { stroke-dasharray: 85 195;
+            stroke-dashoffset: -560; } 84% { stroke-dasharray: 85 195; stroke-dashoffset: -545; } 98% {
+            stroke-dasharray: 85 195; stroke-dashoffset: -530; } 100% { stroke-dasharray: 85 195; stroke-dashoffset:
+            -530; } }
+
+        </style>
+    </head>
+    <body>
+        <div class='root'>
+            <div id='app'></div>
+
+            <div class='spinner'>
+                <svg class='spinner-image' viewBox='0 0 100 100'>
+                    <circle r='44' cx='50' cy='50' />
+                </svg>
+            </div>
+
+        </div>
+
+    </body>
+</html>

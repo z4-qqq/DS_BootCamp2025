@@ -1,0 +1,11 @@
+dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+production
+/build
+/dist
+
+#webpack
+weback.config.ts
