@@ -6,7 +6,7 @@ import os
 from app.model.ttt import TTT
 from app.model.stt import STT
 from app.model.tts import TTS
-from app.agents.prompts.utils import load_prompts
+from app.agents.prompts.utils import load_prompts, choose_random_system_prompt
 from pprint import pp
 from agents import Runner
 from app.agents.interviewee_agent import create_interviewee_agent
@@ -21,7 +21,9 @@ ttt = TTT()
 stt = STT()
 tts = TTS()
 
-prompts = load_prompts("persona_system_prompt.yaml")
+system_prompt_yaml_file = choose_random_system_prompt()
+
+prompts = load_prompts(system_prompt_yaml_file)
 
 # Вебсокет-эндпоинт для интервью
 @router.websocket("/ws/interview")
@@ -47,9 +49,7 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
             # Формируем историю сообщений для передачи агенту
             messages = [ttt.create_chat_message(msg["role"], msg["content"]) for msg in json_data.get("history", [])]
             messages.append(ttt.create_chat_message("user", user_input))  # Добавляем текущее сообщение пользователя
-            # Получаем ответ от агента
-            response = await Runner.run(agent, messages)
-            # response = await Runner.run(agent, user_input, context={"messages": messages}) # Вариант с контекстом
+            response = await Runner.run(agent, messages, context={"chat_history": messages}) # Вариант с контекстом
             agent_text = response.final_output  # Текстовый ответ агента
             if is_audio:
                 # Генерируем аудиофайл с ответом агента

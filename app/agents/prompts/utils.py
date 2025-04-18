@@ -2,6 +2,9 @@ import os
 import yaml
 import re
 
+from pathlib import Path
+import random
+
 def load_prompts(filename: str) -> dict:
     """
     Loads prompts from a YAML file located in the utils directory.
@@ -28,3 +31,12 @@ def extract_xml(text: str, tag: str) -> str:
         content = ' '.join(content.split())
         return content
     return ""
+
+
+def choose_random_system_prompt() -> str:
+    """Choose random system prompt from prompts templates"""
+
+    current_dir = os.path.dirname(os.path.dirname(__file__))
+    prompts_file = os.path.join(current_dir, "prompts")
+    all_available_system_prompts: list[Path] = list(Path(prompts_file).glob("*candidate_system_prompt.yaml"))
+    return random.choice(all_available_system_prompts)
