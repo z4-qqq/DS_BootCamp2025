@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  application:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: backend-application
+    environment:
+      OPENAI_API_KEY: $OPENAI_API_KEY
+    restart: always
+    expose:
+      - "8000"
+    volumes:
+      - .:/srv/www
+    networks:
+      - backend
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs/nginx.crt:/etc/nginx/ssl/nginx.crt
+      - ./certs/nginx.key:/etc/nginx/ssl/nginx.key
+    networks:
+      - backend
+    restart: always
+
+  postgres:
+    image: postgres:latest
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: assistant
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres_data_prod:
+
+networks:
+  backend:
