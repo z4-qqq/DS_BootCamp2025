@@ -4,15 +4,17 @@ from datetime import datetime, timedelta
 from typing import AsyncGenerator
 
 import asyncpg
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, Request, Query
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jose import jwt
 
 from app.api.evaluation import router as evaluation_router
-from app.api.interview import router as interview_router
+from app.api.interview import router as interview_router, get_hint_by_agent
 from app.settings import settings
+from pydantic import BaseModel
+from typing import List
 
 db_pool: asyncpg.Pool = None
 
@@ -114,3 +116,19 @@ async def evaluation_page(request: Request):
 @app.get("/report", response_class=HTMLResponse)
 async def report_page(request: Request):
     return templates.TemplateResponse("report.html", {"request": request})
+
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+class HintRequest(BaseModel):
+    persona: str
+    skill: str
+    messages: List[Message]
+
+@app.post("/api/hint")
+async def get_hint(request: HintRequest):
+    messages = [m.model_dump() for m in reversed(request.messages)]
+    hint = await get_hint_by_agent(persona=request.persona, skill=request.skill, messages=messages)
+    return JSONResponse(content={"hint": hint})

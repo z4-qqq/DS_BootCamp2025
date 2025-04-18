@@ -10,6 +10,7 @@ from app.agents.prompts.utils import load_prompts, choose_random_system_prompt
 from pprint import pp
 from agents import Runner
 from app.agents.interviewee_agent import create_interviewee_agent
+from app.agents.hint_agent import create_hint_agent
 from app.agents.utils import change_voice
 
 # Используем директорию /tmp для временных файлов (доступна для записи всем пользователям)
@@ -64,3 +65,19 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
                 await ws.send_json({"type": "text", "content": agent_text})
     except WebSocketDisconnect:
         pass
+
+
+async def get_hint_by_agent(persona: str = Query("Junior Python Developer"), skill: str = Query("Python programming"), messages: list = []):
+    # Загрузка и форматирование промпта для hint-агента
+    system_prompt_yaml_file = "hint_agent_system_prompt.yaml"
+    prompts = load_prompts(system_prompt_yaml_file)
+    system_prompt = prompts["hint_agent_system_prompt"].format(persona=persona, skill=skill, dialogue=messages)
+    # Создание агента
+    agent = create_hint_agent(system_prompt=system_prompt)
+    
+    response = await Runner.run(agent, "Сгенерируй подсказку")
+
+    agent_text = response.final_output
+
+    return agent_text
+    
