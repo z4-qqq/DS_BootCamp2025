@@ -41,6 +41,7 @@ jobs:
           username: root
           password: ${{ secrets.DROPLET_PASSWORD }}
           script: |
-              cd ~/assistant
-              docker-compose down
-              docker-compose up -d --build
+            export OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            cd ~/assistant
+            docker compose down
+            docker compose up -d --build
