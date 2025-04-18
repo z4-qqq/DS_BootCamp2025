@@ -23,8 +23,7 @@ services:
       - "443:443"
     volumes:
       - ./config/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./certs/nginx.crt:/etc/nginx/ssl/nginx.crt
-      - ./certs/nginx.key:/etc/nginx/ssl/nginx.key
+      - ./certs:/etc/nginx/ssl/
     networks:
       - backend
     restart: always
