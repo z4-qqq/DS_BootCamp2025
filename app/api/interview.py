@@ -21,17 +21,18 @@ ttt = TTT()
 stt = STT()
 tts = TTS()
 
-system_prompt_yaml_file = choose_random_system_prompt()
-
-prompts = load_prompts(system_prompt_yaml_file)
 
 # Вебсокет-эндпоинт для интервью
 @router.websocket("/ws/interview")
 async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python Developer"), skill: str = Query("Python programming")):
+
+    system_prompt_yaml_file = choose_random_system_prompt()
+    prompts = load_prompts(system_prompt_yaml_file)
     await ws.accept()  # Принимаем подключение
     # системный промпт для агента на основе выбранной персоны и навыка
     system_prompt = prompts["persona_system_prompt"].format(persona=persona, skill=skill)
     agent = create_interviewee_agent(system_prompt)  # агент для интервью
+    messages = []
     try:
         while True:
             data = await ws.receive_text()  # сообщение от клиента
@@ -46,10 +47,9 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
                     f.write(audio_bytes)  # Сохраняем аудио во временный файл
                 user_input = stt.transcribe_from_path(temp_audio_path)  # Распознаём речь
                 is_audio = True
-            # Формируем историю сообщений для передачи агенту
-            messages = [ttt.create_chat_message(msg["role"], msg["content"]) for msg in json_data.get("history", [])]
-            messages.append(ttt.create_chat_message("user", user_input))  # Добавляем текущее сообщение пользователя
-            response = await Runner.run(agent, messages, context={"chat_history": messages}) # Вариант с контекстом
+            current_mesage = ttt.create_chat_message("user", user_input)
+            messages.append(current_mesage)  # Добавляем текущее сообщение пользователя
+            response = await Runner.run(agent, user_input, context={"chat_history": messages}) # Вариант с контекстом
             agent_text = response.final_output  # Текстовый ответ агента
             if is_audio:
                 # Генерируем аудиофайл с ответом агента
