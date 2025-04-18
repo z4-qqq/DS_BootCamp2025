@@ -10,30 +10,36 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jose import jwt
 
+import app.db as db
 from app.api.evaluation import router as evaluation_router
 from app.api.interview import router as interview_router
 from app.settings import settings
 
-db_pool: asyncpg.Pool = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
-    global db_pool
-    db_pool = await asyncpg.create_pool(dsn=settings.POSTGRES_DSN)
+    db.db_pool = await asyncpg.create_pool(dsn=settings.POSTGRES_DSN)
 
-    async with db_pool.acquire() as conn:
+    async with db.db_pool.acquire() as conn:
         await conn.execute(f"""
-        CREATE TABLE IF NOT EXISTS {settings.DB_SCHEMA}.{settings.DB_TABLE}(
+        CREATE TABLE IF NOT EXISTS {settings.DB_SCHEMA}.users (
             id SERIAL PRIMARY KEY,
             username VARCHAR(50) UNIQUE NOT NULL,
             hashed_password TEXT NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         """)
+        await conn.execute(f"""
+        CREATE TABLE IF NOT EXISTS {settings.DB_SCHEMA}.interviews (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(50) NOT NULL REFERENCES {settings.DB_SCHEMA}.users(username),
+            interview_data JSONB NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """)
 
     yield
-    await db_pool.close()
+    await db.db_pool.close()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -64,7 +70,7 @@ async def login_page(request: Request):
 async def login(username: str = Form(...), password: str = Form(...)):
     hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-    async with db_pool.acquire() as conn:
+    async with db.db_pool.acquire() as conn:
         user = await conn.fetchrow(
             f"""
         SELECT * FROM {settings.DB_SCHEMA}.{settings.DB_TABLE} WHERE username = $1

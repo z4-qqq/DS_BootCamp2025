@@ -6,12 +6,11 @@ services:
       context: .
       dockerfile: ./Dockerfile
     container_name: backend-application
-    environment:
-      OPENAI_API_KEY: $OPENAI_API_KEY
-      POSTGRES_DSN: $POSTGRES_DSN
+    env_file:
+      - .env
     restart: always
-    expose:
-      - "8000"
+    ports:
+      - "8000:800"
     volumes:
       - .:/srv/www
     networks:
@@ -32,10 +31,8 @@ services:
   postgres:
     image: postgres:latest
     container_name: postgres
-    environment:
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_DB: assistant
+    env_file:
+      - .env
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
     networks:
