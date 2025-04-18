@@ -43,6 +43,16 @@
                 Записать голос
             </button>
         </div>
+        <!-- Подсказка от помощника -->
+        <div id="hint-section" class="mt-6 p-4 border rounded bg-yellow-50 text-yellow-800 hidden">
+            <h3 class="font-semibold mb-2">💡 Подсказка для интервьюера:</h3>
+            <p id="hint-content" class="text-sm"></p>
+        </div>
+        <button id="hintButton" onclick="requestHint()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
+            Подсказка
+        </button>
+        
+        
     </div>
     
     <script>
@@ -208,6 +218,32 @@
             showError('Ошибка отправки сообщения');
         }
     }
+    async function requestHint() {
+
+    try {
+        const response = await fetch('/api/hint', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(conversationHistory)
+        });
+
+        if (!response.ok) throw new Error('Ошибка получения подсказки');
+
+        const data = await response.json();
+        const hint = data.hint;
+
+        const hintSection = document.getElementById('hint-section');
+        const hintContent = document.getElementById('hint-content');
+        hintContent.textContent = hint;
+        hintSection.classList.remove('hidden');
+    } catch (err) {
+        showError('Ошибка при запросе подсказки: ' + err.message);
+    }
+}
+
+
 
     // --- Воспроизведение аудио-ответа ассистента ---
     function playAudio(base64Audio) {
