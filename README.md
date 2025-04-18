@@ -98,3 +98,9 @@ apt-get install -y --no-install-recommends \
 ```
 
 ---
+# Локальный запуск через Docker
+Указать ключ как перемнную окружения
+`export OPENAI_API_KEY=`
+
+Запустить чтоб запустить контейнер
+`docker compose up application`
