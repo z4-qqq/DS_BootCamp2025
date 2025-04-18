@@ -10,25 +10,155 @@
 	<div class="bg-white shadow p-6 rounded w-full max-w-md">
 		<h1 class="mb-4 font-bold text-2xl text-center">Опишите профиль кандидата</h1>
 		<form id="persona-form" class="space-y-4">
-			<div>
-				<label for="persona-profile" class="block mb-1">Профиль:</label>
-				<input type="text" id="persona-profile" name="persona-profile" required class="p-2 border rounded w-full">
-			</div>
-			<div>
-				<label for="persona-skill" class="block mb-1">Навык, который требуется оценить:</label>
-				<input type="text" id="persona-skill" name="persona-skill" required class="p-2 border rounded w-full">
-			</div>
-			<button type="submit" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full text-white">
-				Перейти к интервью
-			</button>
-		</form>
+  <div>
+    <label for="persona-profile" class="block mb-1">Профиль:</label>
+    <input type="text" id="persona-profile" name="persona-profile" required class="p-2 border rounded w-full">
+  </div>
+  <div>
+    <label class="block mb-1">Навык, который требуется оценить:</label>
+    <div class="flex gap-2 mb-2">
+      <button type="button" id="select-skill-btn" class="bg-gray-200 px-3 py-1 rounded">Выбрать</button>
+      <button type="button" id="describe-skill-btn" class="bg-gray-200 px-3 py-1 rounded">Описать</button>
+    </div>
+
+    <!-- Блок выбора из списка -->
+    <div id="select-skill-block" class="space-y-2 hidden">
+      <select id="skill-category" class="p-2 border rounded w-full">
+        <option value="" disabled selected>Выберите категорию</option>
+      </select>
+      <select id="skill-list" class="p-2 border rounded w-full">
+        <option value="" disabled selected>Выберите навык</option>
+      </select>
+    </div>
+
+    <!-- Блок текстового описания -->
+    <div id="describe-skill-block" class="hidden">
+      <textarea id="skill-description" class="p-2 border rounded w-full" rows="4" placeholder="Опишите навык..."></textarea>
+    </div>
+
+    <input type="text" id="persona-skill" name="persona-skill" hidden required>
+  </div>
+
+  <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded w-full text-white">
+    Перейти к интервью
+  </button>
+</form>
 	</div>
 	<script>
+
+		const skillData = {
+  "Я": [
+    "Сохраняет самообладание",
+    "Проявляет выносливость",
+    "Работает энергично",
+    "Адаптируется к изменениям",
+    "В ситуации неопределённости — действует",
+    "Проявляет инициативу",
+    "Верит в лучший исход",
+    "Самосовершенствуется",
+    "Поощряет обратную связь в свой адрес",
+    "Конкурирует",
+    "Транслирует уверенность в себе"
+  ],
+  "Люди": [
+    "Мотивирует других",
+    "Создаёт и укрепляет команду",
+    "Занимает лидирующую позицию",
+    "Даёт сотрудникам возможности для развития",
+    "Понимает людей",
+    "Поддерживает других людей",
+    "Работает в команде",
+    "Поддерживает широкий круг общения",
+    "Проявляет социальную смелость",
+    "Ценит разнообразие людей и взглядов",
+    "Управляет конфликтами",
+    "Влияет на других людей",
+    "Ведёт переговоры",
+    "Выступает на публике",
+    "Ясно излагает мысли",
+    "Производит впечатление на людей",
+    "Учитывает интересы стейкхолдеров и клиентов",
+    "Говорит про изменения"
+  ],
+  "Задачи": [
+    "Организует работу других",
+    "Планирует работу",
+    "Следует плану",
+    "Преследует цели",
+    "Выбирает амбициозные цели",
+    "Добивается высокого качества",
+    "Принимает решение действовать",
+    "Поддерживает социальные и этические нормы",
+    "Поддерживает правила и процедуры",
+    "Внедряет и использует цифровые инструменты"
+  ],
+  "Мышление": [
+    "Ищет и использует новые знания",
+    "Мыслят нестандартно",
+    "Мыслят практически",
+    "Мыслят предпринимательски",
+    "Ищет информацию",
+    "Опираться на достоверную информацию",
+    "Анализирует информацию",
+    "Мыслят стратегически",
+    "Рассматривает альтернативы",
+    "Мыслят абстрактно"
+  ]
+}
         // Проверка наличия параметров и их валидация
+		const selectBtn = document.getElementById('select-skill-btn');
+  const describeBtn = document.getElementById('describe-skill-btn');
+  const selectBlock = document.getElementById('select-skill-block');
+  const describeBlock = document.getElementById('describe-skill-block');
+  const skillCategory = document.getElementById('skill-category');
+  const skillList = document.getElementById('skill-list');
+  const skillInput = document.getElementById('persona-skill');
+  const skillDescription = document.getElementById('skill-description');
+
+  // Заполняем категории
+  Object.keys(skillData).forEach(category => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    skillCategory.appendChild(option);
+  });
+
+  selectBtn.addEventListener('click', () => {
+    selectBlock.classList.remove('hidden');
+    describeBlock.classList.add('hidden');
+    skillInput.value = '';
+  });
+
+  describeBtn.addEventListener('click', () => {
+    selectBlock.classList.add('hidden');
+    describeBlock.classList.remove('hidden');
+    skillInput.value = '';
+  });
+
+  skillCategory.addEventListener('change', () => {
+    const selectedCategory = skillCategory.value;
+    skillList.innerHTML = '<option disabled selected>Выберите навык</option>';
+    skillData[selectedCategory].forEach(skill => {
+      const option = document.createElement('option');
+      option.value = skill;
+      option.textContent = skill;
+      skillList.appendChild(option);
+    });
+  });
+
+  skillList.addEventListener('change', () => {
+    skillInput.value = skillList.value;
+  });
+
+  skillDescription.addEventListener('input', () => {
+    skillInput.value = skillDescription.value;
+  });
         document.getElementById('persona-form').addEventListener('submit', function(event) {
             event.preventDefault();
             const persona_profile = document.getElementById('persona-profile').value.trim();
-            const persona_skill = document.getElementById('persona-skill').value.trim();
+            const persona_skill = document.getElementById('skill-description').value.trim() || document.getElementById('skill-list').value.trim();
+			console.log(persona_profile, persona_skill)
+
 
             // Простая валидация на стороне клиента
             if (!persona_profile || !persona_skill) {

@@ -2,6 +2,7 @@ research/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+certs/
 *.py[cod]
 *$py.class
 
