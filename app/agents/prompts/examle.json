@@ -1,7 +1,0 @@
-{
-    "Intern Machine Learning Engineer": ["Базовые знания машинного обучения"],
-    "Junior Machine Learning Engineer": ["Базовые знания машинного обучения", "Знания объектно-ориентированного программирования", "Программирование на Python"],
-    "Middle Machine Learning Engineer": ["Разработка Machine Learning сервисов", "Оптимизация ML моделей"],
-    "Senior Machine Learning Engineer": ["Менторинг младших коллег"],
-    "Tech Lead Machine Learning": ["Руководство командой"]
-}

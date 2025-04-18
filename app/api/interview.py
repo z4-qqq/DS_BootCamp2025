@@ -10,6 +10,7 @@ from app.agents.prompts.utils import load_prompts, choose_random_system_prompt
 from pprint import pp
 from agents import Runner
 from app.agents.interviewee_agent import create_interviewee_agent
+from app.agents.utils import change_voice
 
 # Используем директорию /tmp для временных файлов (доступна для записи всем пользователям)
 TEMP_DIR = "/tmp/ai-interview-temp"
@@ -53,6 +54,7 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
             agent_text = response.final_output  # Текстовый ответ агента
             if is_audio:
                 # Генерируем аудиофайл с ответом агента
+                change_voice(tts=tts, system_prompt_yaml_file=system_prompt_yaml_file)
                 tts_response = tts.generate_speech(agent_text, tone=prompts["persona_voice_tone_prompt"])
                 agent_audio = base64.b64encode(tts_response.content).decode('utf-8')
                 # Отправляем клиенту текст и аудио
