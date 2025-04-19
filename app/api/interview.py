@@ -34,6 +34,7 @@ async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python
     # системный промпт для агента на основе выбранной персоны и навыка
     system_prompt = prompts["persona_system_prompt"].format(persona=persona, skill=skill)
     agent = create_interviewee_agent(system_prompt)  # агент для интервью
+    print(system_prompt_yaml_file)
     messages = []
     try:
         while True:

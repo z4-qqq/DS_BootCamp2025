@@ -19,11 +19,12 @@ async def evaluate_endpoint(request: Request):
     global last_evaluation_result
     # 1. Считаем входные данные
     data = await request.json()
+    skill = data.get("skill", "")
     messages = data.get("messages", [])
     # 2. Создадим агента с системным промптом
     agent = create_evaluation_agent(system_prompt)
     # 3. Получим ответ от агента
-    response = await Runner.run(agent, messages)
+    response = await Runner.run(agent, messages, context={"skill": skill})
     # 4. Преобразуем в словарь и запомним
     last_evaluation_result = response.final_output_as(cls=dict)
     # 5. Вернём клиенту результат сразу
