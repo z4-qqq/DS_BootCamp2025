@@ -19,6 +19,11 @@
         
         <div id="report-content" class="hidden space-y-4">
             <div>
+                <h2 class="font-bold text-pink-700">Компетенция (Skill)</h2>
+                <div id="skill" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+
+            <div>
                 <h2 class="font-bold text-blue-700">Ситуация (Situation)</h2>
                 <div id="situation" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
             </div>
@@ -36,6 +41,10 @@
             <div>
                 <h2 class="font-bold text-red-700">Результат (Result)</h2>
                 <div id="result" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
+            </div>
+            <div>
+                <h2 class="font-bold text-red-700">Вывод (Conclusion)</h2>
+                <div id="conclusion" class="bg-gray-50 p-3 border rounded text-gray-800 whitespace-pre-wrap">-</div>
             </div>
         </div>
         
@@ -78,10 +87,12 @@
                     }
                     
                     // Заполняем содержимое элементов
+                    document.getElementById('skill').textContent = data.Skill || "-";
                     document.getElementById('situation').textContent = data.Situation || "-";
                     document.getElementById('task').textContent = data.Task || "-";
                     document.getElementById('action').textContent = data.Action || "-";
                     document.getElementById('result').textContent = data.Result || "-";
+                    document.getElementById('conclusion').textContent = data.Conclusion || "-"
                     
                     // Скрываем индикатор загрузки и показываем результаты
                     loadingIndicator.classList.add('hidden');
