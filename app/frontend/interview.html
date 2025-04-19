@@ -6,6 +6,18 @@
     <title>Интервью</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<!-- Модальное окно фидбека -->
+<div id="feedbackModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-xl p-6">
+        <h2 class="text-xl font-semibold mb-4">Фидбек по интервью (формат STAR)</h2>
+        <textarea id="feedbackInput" rows="6" class="w-full p-2 border rounded" placeholder="Опишите ситуацию, задачу, действия и результат..."></textarea>
+        <div class="flex justify-end space-x-2 mt-4">
+            <button onclick="closeFeedbackModal()" class="px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded">Отмена</button>
+            <button onclick="saveInterviewWithFeedback()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Сохранить интервью</button>
+        </div>
+    </div>
+</div>
+
 <body class="flex flex-col justify-center items-center bg-[#2B2D33] min-h-screen font-sans">
     <div class="bg-white shadow mt-6 p-6 rounded w-full max-w-4xl">
         <div class="bg-gray-50 mb-4 p-2 rounded">
@@ -265,25 +277,17 @@
 
     // --- Завершение интервью, экспорт истории в файл и переход на главную ---
     function endInterview() {
-        if (!conversationHistory.messages.length) {
-            alert("Нет данных для сохранения. Проведите интервью перед сохранением.");
-            return;
-        }
-        if (!confirm("Завершить интервью и сохранить результаты?")) return;
-        try {
-            exportInterviewData();
-            closeConnection();
-            redirectToHome();
-        } catch (error) {
-            alert('Ошибка при сохранении результатов интервью: ' + error.message);
-        }
+        // Открываем модальное окно фидбека
+        document.getElementById('feedbackModal').classList.remove('hidden');
     }
+
     function exportInterviewData() {
         const interviewData = {
             timestamp: new Date().toISOString(),
             persona: currentPersona,
             skill: currentSkill,
             messages: conversationHistory.messages,
+            feedback: conversationHistory.feedback || ""
         };
         if (!interviewData.messages.length) throw new Error("Нет сообщений для сохранения");
         const jsonData = JSON.stringify(interviewData, null, 2);
@@ -291,6 +295,7 @@
         const fileName = generateFileName(currentPersona);
         downloadBlob(blob, fileName);
     }
+
     function generateFileName(persona) {
         const sanitizedPersona = persona.replace(/[^a-zA-Zа-яА-Я0-9]/g, '_').substring(0, 20);
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -428,6 +433,28 @@
         ];
         elements.forEach(el => { if (el) el.disabled = disabled; });
         if (!disabled) document.getElementById('messageText').focus();
+    }
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').classList.add('hidden');
+    }
+
+    function saveInterviewWithFeedback() {
+        const feedback = document.getElementById('feedbackInput').value.trim();
+        if (!feedback) {
+            alert("Пожалуйста, заполните фидбек.");
+            return;
+        }
+
+        // Добавляем фидбек к истории
+        conversationHistory.feedback = feedback;
+
+        try {
+            exportInterviewData(); // сохраняем как раньше
+            closeConnection();
+            redirectToHome();
+        } catch (error) {
+            alert('Ошибка при сохранении результатов интервью: ' + error.message);
+        }
     }
 
     // --- Инициализация соединения при загрузке страницы ---

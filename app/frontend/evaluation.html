@@ -18,6 +18,12 @@
                 <p class="mt-1 text-gray-500 text-xs">Вставьте JSON с историей сообщений интервью или загрузите файл</p>
                 <input type="file" id="json-file" accept=".json" class="mt-2 text-sm" />
             </div>
+            <!-- Добавим в форму перед кнопками -->
+            <div class="flex items-center">
+                <input id="include-manager-feedback" type="checkbox" class="mr-2">
+                <label for="include-manager-feedback" class="text-sm">Дать обратную связь нанимающему менеджеру</label>
+            </div>
+
             <div class="flex justify-between items-center">
                 <a href="/" class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded text-white">Назад</a>
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white">Оценить</button>
@@ -29,6 +35,7 @@
     const jsonFile = document.getElementById('json-file');
     const statusMessage = document.getElementById('status-message');
     const form = document.getElementById('evaluationForm');
+    const includeManagerFeedback = document.getElementById('include-manager-feedback');
 
     jsonFile.addEventListener('change', async (e) => {
         const file = e.target.files[0];
@@ -55,18 +62,35 @@
         if (error) return showStatus('error', error);
 
         showStatus('info', 'Обработка данных...');
+
         try {
             const res = await fetch('/api/evaluation', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(jsonData)
             });
-            if (!res.ok) throw new Error('Network response was not ok ' + res.status);
+
+            if (!res.ok) throw new Error('Ошибка при основной оценке: ' + res.statusText);
+
+            // Если выбран флаг — дополнительно отправляем фидбек
+            if (includeManagerFeedback.checked) {
+                const resFeedback = await fetch('/api/feedback_evaluation', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
+                });
+
+                if (!resFeedback.ok) throw new Error('Ошибка при фидбеке менеджеру: ' + resFeedback.statusText);
+            }
+
+            // Перенаправляем только после всех fetch
             window.location.href = '/report';
+
         } catch (err) {
-            showStatus('error', `Ошибка: ${err.message}`);
+            return showStatus('error', `Ошибка: ${err.message}`);
         }
     });
+
 
     function validateJson(data) {
         if (!data.timestamp) return 'Отсутствует поле "timestamp" в JSON';

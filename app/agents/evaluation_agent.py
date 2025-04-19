@@ -21,3 +21,12 @@ def create_evaluation_agent(system_prompt: str) -> Agent:
         tools=[extract_star, skill],
         output_type=STAROutput
     )
+
+
+def create_feedback_evaluation_agent(system_prompt: str) -> Agent:
+    return Agent(
+        name="Помошник рекрутера, который дает ему советы, как улучшить интервью",
+        handoff_description="Оцениваешь фидбек, который дал нанимающий менеджер и даешь советы по улучшению",
+        instructions=system_prompt,
+        tools=[skill]
+    )
