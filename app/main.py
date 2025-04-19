@@ -47,6 +47,8 @@ app.mount("/frontend", StaticFiles(directory="app/frontend"), name="frontend")
 app.include_router(evaluation_router)
 app.include_router(interview_router)
 app.state.feedback_result = None
+app.state.evaluation_result = None
+
 
 # Templates for frontend
 templates = Jinja2Templates(directory="app/frontend")
