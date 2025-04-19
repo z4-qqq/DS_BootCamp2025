@@ -12,6 +12,7 @@ def build_feedback_evaluation_user_prompt(
     """
     Формирует сообщения для агента оценки фидбека.
     """
+    print(agent_feedback)
     prompt = (
         "Вот фидбек от нанимающего менеджера после интервью:\n\n"
         f"{feedback}\n\n"
@@ -61,7 +62,7 @@ async def evaluate_feedback_endpoint(request: Request):
     feedback = data.get("feedback", "")
 
     feedback_user_prompt = build_feedback_evaluation_user_prompt(
-        messages=messages, feedback=feedback, agent_feedback=last_evaluation_result
+        messages=messages, feedback=feedback, agent_feedback=request.app.state.evaluation_result.model_dump()
     )
 
     response = await Runner.run(feedback_evaluation_agent, feedback_user_prompt, context={"skill": skill})
