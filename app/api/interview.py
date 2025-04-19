@@ -29,7 +29,6 @@ tts = TTS()
 async def websocket_interview(ws: WebSocket, persona: str = Query("Junior Python Developer"), skill: str = Query("Python programming")):
 
     system_prompt_yaml_file = choose_random_system_prompt()
-    system_prompt_yaml_file = "shy_candidate_system_prompt.yaml"
     prompts = load_prompts(system_prompt_yaml_file)
     await ws.accept()  # Принимаем подключение
     # системный промпт для агента на основе выбранной персоны и навыка
