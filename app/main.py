@@ -22,7 +22,7 @@ db_pool: asyncpg.Pool = None
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
     global db_pool
-    db_pool = await asyncpg.create_pool(dsn=settings.POSTGRES_DSN)
+    db_pool = await asyncpg.create_pool(dsn=settings.POSTGRES_DSN or 'postgres://postgres:postgres@postgres:5432/assistant')
 
     async with db_pool.acquire() as conn:
         await conn.execute(f"""

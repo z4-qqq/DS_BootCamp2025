@@ -51,6 +51,9 @@
                 Завершить интервью
             </button>
             <span id="recordingStatus" class="text-gray-600"></span>
+            <button id="hintButton" onclick="requestHint()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
+                Подсказка
+            </button>
             <button id="recordButton" onclick="toggleRecording()" class="bg-blue-600 hover:bg-red-600 px-4 py-2 rounded text-white" disabled>
                 Записать голос
             </button>
@@ -60,9 +63,6 @@
             <h3 class="font-semibold mb-2">💡 Подсказка для интервьюера:</h3>
             <p id="hint-content" class="text-sm"></p>
         </div>
-        <button id="hintButton" onclick="requestHint()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded text-white">
-            Подсказка
-        </button>
         
         
     </div>
