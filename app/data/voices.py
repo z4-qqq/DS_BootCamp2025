@@ -10,5 +10,11 @@ CANDIDATE_TO_VOICE: dict[str] = {
     "junior_candidate_system_prompt.yaml": "coral",
     "passive_agressive_candidate_system_prompt.yaml": "onyx",
     "too_positive_candidate_system_prompt.yaml": "echo",
-    "too_smart_candidate_system_prompt.yaml": "onyx"
+    "too_smart_candidate_system_prompt.yaml": "onyx",
+    "toxic_zoomer_candidate_system_prompt.yaml": "coral",
+    "toxic_zoomer_candidate_system_prompt.yaml": "coral",
+    "too_polite_candidate_system_prompt.yaml": "onyx",
+    "shy_candidate_system_prompt.yaml": "shimmer",
+    "interrupt_candidate_system_prompt.yaml": "echo",
+    "boring_candidate_system_prompt.yaml": "onyx"
 }
