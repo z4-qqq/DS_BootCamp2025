@@ -4,7 +4,7 @@ import json
 
 
 class TTT:
-    def __init__(self, model: str = "gpt-4.1-mini"):
+    def __init__(self, model: str = "gpt-4o"):
         self.client = client
         self.model = model
 
