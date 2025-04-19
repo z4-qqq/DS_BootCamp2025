@@ -12,7 +12,6 @@ def build_feedback_evaluation_user_prompt(
     """
     Формирует сообщения для агента оценки фидбека.
     """
-    print(agent_feedback)
     prompt = (
         "Вот фидбек от нанимающего менеджера после интервью:\n\n"
         f"{feedback}\n\n"
