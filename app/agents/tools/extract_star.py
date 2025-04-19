@@ -3,6 +3,8 @@ from agents import function_tool
 from typing import List
 from pydantic import BaseModel
 
+ttt = TTT()
+
 class Message(BaseModel):
     role: str
     content: str
